@@ -9,7 +9,7 @@ namespace PekingExpress
 	{
 	public:
 		IGraph() = default;
-		~IGraph() = default;
+		virtual ~IGraph() = default;
 	public:
 		virtual const std::vector<Node*> GetLocations() const = 0;
 		virtual const std::vector<Node*> GetCriticalLocations() const = 0;
