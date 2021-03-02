@@ -16,3 +16,9 @@ target_compile_features(PekingExpressProjectMain PRIVATE cxx_std_17)
 set_target_properties(PekingExpressProjectMain PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(PekingExpressProjectMain PekingExpress)
+
+add_library(Deamer_Shared SHARED ${SOURCE_LIST} ${HEADER_LIST})
+
+target_include_directories(Deamer_Shared PRIVATE ../include)
+target_compile_features(Deamer_Shared PUBLIC cxx_std_17)
+set_target_properties(Deamer_Shared PROPERTIES LINKER_LANGUAGE CXX)
