@@ -1,4 +1,6 @@
 out/*
+build/*
+CMakeLists.json
 
 ### C++ ###
 # Prerequisites
