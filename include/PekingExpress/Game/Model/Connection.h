@@ -17,6 +17,13 @@ namespace PekingExpress
 		const Node* GetNode() const;
 		int GetPrice() const;
 
+		bool operator==(const Connection connection) const
+		{
+			return
+			(connection.GetNode() == this->GetNode())
+			&& (connection.GetPrice() == this->GetPrice());
+		}
+
 	};
 }
 
