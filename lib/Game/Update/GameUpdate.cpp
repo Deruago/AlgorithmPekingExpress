@@ -1,19 +1,18 @@
 #include "PekingExpress/Game/Update/GameUpdate.h"
 
 #include <queue>
+#include <climits>
 
-#define OFFSET 1
-
-PekingExpress::GameUpdate::GameUpdate(IGraph* graph_, ICouple* ourCouple_, std::vector<ICouple*> competitors_) 
+PekingExpress::GameUpdate::GameUpdate(Graph* graph_, Couple* ourCouple_, std::vector<Couple*> competitors_)
 	: graph(graph_),
 	  ourCouple(ourCouple_),
 	  competitors(competitors_)
 {
 }
 
-PekingExpress::ICouple* PekingExpress::GameUpdate::GetCompetitorById(const int id) const
+PekingExpress::Couple* PekingExpress::GameUpdate::GetCompetitorById(const int id) const
 {
-	for (ICouple* couple : competitors)
+	for (Couple* couple : competitors)
 	{
 		if (couple->GetId() == id)
 		{
@@ -24,43 +23,37 @@ PekingExpress::ICouple* PekingExpress::GameUpdate::GetCompetitorById(const int i
 	return nullptr;
 }
 
-std::vector<PekingExpress::ICouple*> PekingExpress::GameUpdate::GetAllCouples()
+std::vector<PekingExpress::Couple*> PekingExpress::GameUpdate::GetAllCouples() const
 {
-	competitors.insert(competitors.begin(), ourCouple);
-	return competitors;
+	std::vector<Couple*> allCouples = { ourCouple };
+	allCouples.insert(allCouples.end(), competitors.begin(), competitors.end());
+	return allCouples;
 }
 
-PekingExpress::IGraph* PekingExpress::GameUpdate::GetGraph()
+const PekingExpress::Graph* PekingExpress::GameUpdate::GetGraph() const
 {
 	return graph;
 }
 
-void PekingExpress::GameUpdate::UpdateBudgetCompetitor(const int id)
+void PekingExpress::GameUpdate::UpdateBudgetCompetitor(const int id, int newBudget)
 {
-
+	Couple* couple = GetCompetitorById(id);
+	
+	if (couple != nullptr)
+	{
+		couple->SetBudget(newBudget);
+	}
 }
 
-void PekingExpress::GameUpdate::UpdateBudgetOur()
+void PekingExpress::GameUpdate::UpdateBudgetOur(int newBudget)
 {
-
+	ourCouple->SetBudget(newBudget);
 }
 
-void PekingExpress::GameUpdate::UpdateCompetitorLocation(const int groupid, const int location)
+void PekingExpress::GameUpdate::UpdateOccupiedLocations(std::vector<Node*> nodes)
 {
-	ICouple* group = GetCompetitorById(groupid);
-
-	if (group == nullptr)
-	{
-		return;
-	}
-
-	for (Node* node : graph->GetLocations())
-	{
-		if (node->GetId() == location)
-		{
-			group->SetCurrentPosition(node);
-		}
-	}
+	occupiedNodes.clear();
+	occupiedNodes = nodes;
 }
 
 void PekingExpress::GameUpdate::UpdateOurLocation(const int location)
@@ -74,39 +67,90 @@ void PekingExpress::GameUpdate::UpdateOurLocation(const int location)
 	}
 }
 
-int PekingExpress::GameUpdate::NextMove()
-{
-	std::vector<bool> visitedNodes;
+#include <iostream>
+using namespace std;
 
-	for (bool el : graph->GetLocations())
+PekingExpress::Node* PekingExpress::GameUpdate::MinDistance(std::vector<int> dist, std::vector<bool> sptSet)
+{
+	int min = INT_MAX;
+	Node* min_index = nullptr;
+
+	for (auto vec : graph->GetLocations())
 	{
-		visitedNodes.push_back(false);
+		if (sptSet[vec->GetId() - 1] == false && dist[vec->GetId() - 1] <= min)
+		{
+			min = dist[vec->GetId() - 1];
+			min_index = vec;
+		}
 	}
 
-	std::vector<int> d(graph->GetLocations().size());
+	return min_index;
+}
 
-	std::queue<Node*> nodeQueue;
-
-	nodeQueue.push(graph->GetLocations().front());
-	visitedNodes.at(nodeQueue.front()->GetId() - OFFSET);
-
-	while (!nodeQueue.empty())
+PekingExpress::Connection* PekingExpress::GameUpdate::GetConnection(Node* startNode, Node* endNode)
+{
+	for (Connection con : startNode->GetConnections())
 	{
-		int v = nodeQueue.front()->GetId() - OFFSET;
-		nodeQueue.pop();
-
-		for (auto nodeNumber : graph->GetLocations().at(v)->GetConnections())
+		if (con.GetNode()->GetId() == endNode->GetId())
 		{
-			if (visitedNodes.at(nodeNumber.GetNode()->GetId() - OFFSET) == false)
+			return new Connection(con.GetNode(), con.GetPrice());
+		}
+	}
+
+	return nullptr;
+}
+
+void PekingExpress::GameUpdate::printPath(Node* parent[], int j)
+{
+	// Base Case : If j is source 
+	if (parent[j - 1]->GetId() == -1)
+		return;
+
+	printPath(parent, parent[j - 1]->GetId());
+
+	printf("%d ", j);
+}
+
+
+const int PekingExpress::GameUpdate::NextMove()
+{
+	std::vector<int> dist(graph->GetLocations().size(), INT_MAX);
+	std::vector<bool> sptSet(graph->GetLocations().size(), false);
+	std::vector<Node*> parent(graph->GetLocations().size(), new Node(-1, {}, false));
+
+	dist[ourCouple->GetCurrentPosition()->GetId() - 1] = 0;
+
+	for (int i = 0; i < graph->GetLocations().size() - 1; i++)
+	{
+		Node* u = MinDistance(dist, sptSet);
+
+		if (u == nullptr)
+		{
+			return -1;
+		}
+
+		sptSet[u->GetId() - 1] = true;
+
+		for (auto vec : graph->GetLocations())
+		{
+			Connection* tempCon = GetConnection(u, vec);
+
+			if (!sptSet[vec->GetId() - 1] && tempCon != nullptr && dist[u->GetId() - 1] && dist[u->GetId() - 1] + tempCon->GetPrice() < dist[vec->GetId() - 1])
 			{
-				visitedNodes.at(nodeNumber.GetNode()->GetId() - OFFSET) = true;
-				nodeQueue.push(graph->GetLocations().at(nodeNumber.GetNode()->GetId() - OFFSET));
-				d.at(nodeNumber.GetNode()->GetId() - OFFSET) = d.at(v) + 1;
+				parent[vec->GetId() - 1] = u;
+				dist[vec->GetId() - 1] = dist[u->GetId() - 1] + tempCon->GetPrice();
 			}
 		}
 	}
 
-	return d.at(graph->GetLocations().back()->GetId() - OFFSET);
+	printPath(parent.data(), graph->GetLocations().back()->GetId());
+
+	//for (auto node : dist)
+	//{
+	//	cout << node << endl;
+	//}
+
+	return parent[0]->GetId();
 }
 
 void PekingExpress::GameUpdate::ApplyOurMove(const int location)
@@ -116,13 +160,4 @@ void PekingExpress::GameUpdate::ApplyOurMove(const int location)
 
 PekingExpress::GameUpdate::~GameUpdate()
 {
-	delete graph;
-	delete ourCouple;
-
-	for (ICouple* couple : competitors)
-	{
-		delete couple;
-	}
-
-	competitors.clear();
 }

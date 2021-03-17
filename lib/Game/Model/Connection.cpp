@@ -6,7 +6,7 @@ PekingExpress::Connection::Connection(Node* const node_, const int price_)
 {
 }
 
-const PekingExpress::Node* PekingExpress::Connection::GetNode() const
+PekingExpress::Node* PekingExpress::Connection::GetNode() const
 {
 	return Node_;
 }
