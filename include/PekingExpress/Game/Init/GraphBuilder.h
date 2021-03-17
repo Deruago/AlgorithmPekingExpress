@@ -17,6 +17,7 @@ namespace PekingExpress
 		void AddNode(int nodeId);
 		void AddCriticalNode(int nodeId);
 		void AddConnection(int sourceNode, int destinationNode, int price);
+		bool IsDuplicate(int id);
 		Graph* GetGraph() const;
 	};
 }
