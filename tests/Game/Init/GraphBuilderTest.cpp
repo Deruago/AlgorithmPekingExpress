@@ -126,3 +126,20 @@ TEST_F(TestGraphBuilder, CreateGraphWithIdenticalNodes_GraphCorrectlyGenerated)
 
 	delete res;
 }
+
+TEST_F(TestGraphBuilder, CreateGraphWithTwoNodesAndAConnectionThatIsTwoWay_GraphIsCorrectlyGenerated)
+{
+	GraphBuilder graphBuilder;
+
+	graphBuilder.AddNode(1);
+	graphBuilder.AddNode(2);
+	graphBuilder.AddConnection(1, 2, 0);
+	Graph* res = graphBuilder.GetGraph();
+
+	EXPECT_EQ(1, res->GetLocations()[0]->GetId());
+	EXPECT_EQ(2, res->GetLocations()[1]->GetId());
+	EXPECT_EQ(2, res->GetLocations()[0]->GetConnections()[0].GetNode()->GetId());
+	EXPECT_EQ(1, res->GetLocations()[1]->GetConnections()[0].GetNode()->GetId());
+
+	delete res;
+}

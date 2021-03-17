@@ -53,6 +53,7 @@ void PekingExpress::GraphBuilder::AddConnection(int sourceNode, int destinationN
 	}
 
 	tempSourceNode->AddConnection(Connection(tempDestNode, price));
+	tempDestNode->AddConnection(Connection(tempSourceNode, price));
 }
 
 PekingExpress::Graph* PekingExpress::GraphBuilder::GetGraph() const
