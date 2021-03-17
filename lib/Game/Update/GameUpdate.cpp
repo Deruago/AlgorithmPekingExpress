@@ -1,3 +1,4 @@
+/*
 #include "PekingExpress/Game/Update/GameUpdate.h"
 
 PekingExpress::GameUpdate::GameUpdate(IGraph& graph, ICouple& ourCouple, ICouple& competitor)
@@ -14,3 +15,4 @@ int PekingExpress::GameUpdate::NextMove()
 {
 	return 0;
 }
+*/
