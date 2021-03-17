@@ -100,17 +100,34 @@ PekingExpress::Connection* PekingExpress::GameUpdate::GetConnection(Node* startN
 	return nullptr;
 }
 
-void PekingExpress::GameUpdate::printPath(Node* parent[], int j)
+bool PekingExpress::GameUpdate::IsVacantCriticalNode(Node* node)
+{
+	for (auto ocNode : occupiedNodes)
+	{
+		if (ocNode->IsCritical() && ocNode->GetId() == node->GetId())
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void PekingExpress::GameUpdate::CreatePath(Node* parent[], int j)
 {
 	// Base Case : If j is source 
 	if (parent[j - 1]->GetId() == -1)
 		return;
 
-	printPath(parent, parent[j - 1]->GetId());
+	CreatePath(parent, parent[j - 1]->GetId());
 
-	printf("%d ", j);
+	path.push_back(parent[j]);
 }
 
+const std::vector<PekingExpress::Node*> PekingExpress::GameUpdate::GetPath() const
+{
+	return path;
+}
 
 const int PekingExpress::GameUpdate::NextMove()
 {
@@ -135,7 +152,7 @@ const int PekingExpress::GameUpdate::NextMove()
 		{
 			Connection* tempCon = GetConnection(u, vec);
 
-			if (!sptSet[vec->GetId() - 1] && tempCon != nullptr && dist[u->GetId() - 1] && dist[u->GetId() - 1] + tempCon->GetPrice() < dist[vec->GetId() - 1])
+			if (!sptSet[vec->GetId() - 1] && tempCon != nullptr && dist[u->GetId() - 1] && dist[u->GetId() - 1] + tempCon->GetPrice() < dist[vec->GetId() - 1] && IsVacantCriticalNode(u))
 			{
 				parent[vec->GetId() - 1] = u;
 				dist[vec->GetId() - 1] = dist[u->GetId() - 1] + tempCon->GetPrice();
@@ -143,12 +160,14 @@ const int PekingExpress::GameUpdate::NextMove()
 		}
 	}
 
-	printPath(parent.data(), graph->GetLocations().back()->GetId());
+	for (auto node : parent)
+	{
+		cout << node->GetId();
+	}
 
-	//for (auto node : dist)
-	//{
-	//	cout << node << endl;
-	//}
+	cout << endl;
+
+	CreatePath(parent.data(), graph->GetLocations().back()->GetId());
 
 	return parent[0]->GetId();
 }

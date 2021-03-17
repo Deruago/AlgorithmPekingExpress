@@ -15,9 +15,12 @@ namespace PekingExpress
 		Couple* ourCouple;
 		std::vector<Couple*> competitors;
 		std::vector<Node*> occupiedNodes;
+		std::vector<Node*> path;
 
 		Node* MinDistance(std::vector<int> dist, std::vector<bool> sptSet);
 		Connection* GetConnection(Node* startNode, Node* endNode);
+		bool IsVacantCriticalNode(Node* node);
+		void CreatePath(Node* parent[], int j);
 
 	public:
 		GameUpdate(Graph* graph_, Couple* ourCouple_, std::vector<Couple*> competitors_);
@@ -33,7 +36,7 @@ namespace PekingExpress
 		const int NextMove();
 		void ApplyOurMove(const int location);
 
-		void printPath(Node* parent[], int j);
+		const std::vector<Node*> GetPath() const;
 	};
 }
 

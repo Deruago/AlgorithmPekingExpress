@@ -68,7 +68,7 @@ TEST_F(TestGameUpdate, GetNextMoveBetweenTwoNodes_NextMoveSuccesfullyReturned)
 
 	const int res = gameUpdate.NextMove();
 
-	EXPECT_EQ(res, 2);
+	EXPECT_EQ(gameUpdate.GetPath(), std::vector<Node*>({ node1, node2, node3 }));
 }
 
 //TEST_F(TestGameUpdate, GetNextMoveBetweenTwoCriticalNodes_NextMoveSuccesfullyReturned)
