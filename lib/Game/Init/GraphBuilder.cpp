@@ -55,4 +55,3 @@ PekingExpress::GraphBuilder::~GraphBuilder()
 		delete node;
 	}
 }
-
