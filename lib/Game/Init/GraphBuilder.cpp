@@ -43,7 +43,7 @@ void PekingExpress::GraphBuilder::AddConnection(int sourceNode, int destinationN
 	tempSourceNode->AddConnection(Connection(tempDestNode, price));
 }
 
-PekingExpress::IGraph* PekingExpress::GraphBuilder::GetGraph() const
+PekingExpress::Graph* PekingExpress::GraphBuilder::GetGraph() const
 {
 	return new Graph(graphNodes);
 }

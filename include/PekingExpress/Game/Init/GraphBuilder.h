@@ -11,13 +11,13 @@ namespace PekingExpress
 	private:
 		std::vector<Node*> graphNodes;
 	public:
-		GraphBuilder() = default;
-		~GraphBuilder() = default;
+		GraphBuilder();
+		~GraphBuilder();
 	public:
 		void AddNode(int nodeId);
 		void AddCriticalNode(int nodeId);
 		void AddConnection(int sourceNode, int destinationNode, int price);
-		IGraph* GetGraph() const;
+		Graph* GetGraph() const;
 	};
 }
 
