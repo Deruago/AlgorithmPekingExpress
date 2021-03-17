@@ -6,7 +6,7 @@
 
 namespace PekingExpress
 {
-	class GameUpdate
+	/*class GameUpdate
 	{
 	public:
 		GameUpdate(IGraph& graph, ICouple& ourCouple, ICouple& competitor) = default;
@@ -16,7 +16,7 @@ namespace PekingExpress
 		int NextMove();
 	private:
 		IGraph& graph;
-	};
+	};*/
 }
 
 #endif //PEKINGEXPRESS_GAME_UPDATE_GAMEUPDATE_H
