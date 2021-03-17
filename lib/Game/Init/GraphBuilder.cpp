@@ -1,20 +1,32 @@
 #include "PekingExpress/Game/Init/GraphBuilder.h"
 
-PekingExpress::GraphBuilder::GraphBuilder()
+bool PekingExpress::GraphBuilder::IsDuplicate(int id)
 {
+	for (auto node : graphNodes)
+	{
+		if (node->GetId() == id)
+		{
+			return true;
+		}
+	}
 
+	return false;
 }
 
-void PekingExpress::GraphBuilder::AddNode(int nodeId)
+void PekingExpress::GraphBuilder::AddNode(int nodeId, bool isCritical)
 {
-	Node* node = new Node(nodeId, {}, false);
+	if (IsDuplicate(nodeId))
+	{
+		return;
+	}
+
+	Node* node = new Node(nodeId, {}, isCritical);
 	graphNodes.push_back(node);
 }
 
 void PekingExpress::GraphBuilder::AddCriticalNode(int nodeId)
 {
-	Node* node = new Node(nodeId, {}, true);
-	graphNodes.push_back(node);
+	AddNode(nodeId, true);
 }
 
 void PekingExpress::GraphBuilder::AddConnection(int sourceNode, int destinationNode, int price)
@@ -46,12 +58,4 @@ void PekingExpress::GraphBuilder::AddConnection(int sourceNode, int destinationN
 PekingExpress::Graph* PekingExpress::GraphBuilder::GetGraph() const
 {
 	return new Graph(graphNodes);
-}
-
-PekingExpress::GraphBuilder::~GraphBuilder()
-{
-	for (auto node : graphNodes)
-	{
-		delete node;
-	}
 }

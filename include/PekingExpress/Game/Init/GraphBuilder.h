@@ -10,15 +10,16 @@ namespace PekingExpress
 	{
 	private:
 		std::vector<Node*> graphNodes;
+	private:
+		bool IsDuplicate(int id);
 	public:
-		GraphBuilder();
-		~GraphBuilder();
+		GraphBuilder() = default;
+		~GraphBuilder() = default;
 	public:
-		void AddNode(int nodeId);
+		void AddNode(int nodeId, bool isCritical = false);
 		void AddCriticalNode(int nodeId);
 		void AddConnection(int sourceNode, int destinationNode, int price);
-		bool IsDuplicate(int id);
-		Graph* GetGraph() const;
+		[[nodiscard]] Graph* GetGraph() const;
 	};
 }
 

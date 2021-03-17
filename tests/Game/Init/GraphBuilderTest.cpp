@@ -18,6 +18,8 @@ TEST_F(TestGraphBuilder, CreateEmptyGraph_GraphIsCorrectlyGenerated)
 	Graph* res = graphBuilder.GetGraph();
 
 	EXPECT_EQ(emptyGraph.GetLocations(), res->GetLocations());
+
+	delete res;
 }
 
 TEST_F(TestGraphBuilder, CreateGraphWithOneNode_GraphIsCorrectlyGenerated)
@@ -28,6 +30,8 @@ TEST_F(TestGraphBuilder, CreateGraphWithOneNode_GraphIsCorrectlyGenerated)
 	Graph* res = graphBuilder.GetGraph();
 
 	EXPECT_EQ(1, res->GetLocations()[0]->GetId());
+
+	delete res;
 }
 
 TEST_F(TestGraphBuilder, CreateGraphWithMultipleNodes_GraphIsCorrectlyGenerated)
@@ -42,6 +46,8 @@ TEST_F(TestGraphBuilder, CreateGraphWithMultipleNodes_GraphIsCorrectlyGenerated)
 	EXPECT_EQ(1, res->GetLocations()[0]->GetId());
 	EXPECT_EQ(2, res->GetLocations()[1]->GetId());
 	EXPECT_EQ(3, res->GetLocations()[2]->GetId());
+
+	delete res;
 }
 
 TEST_F(TestGraphBuilder, CreateGraphWithTwoNodesAndAConnection_GraphIsCorrectlyGenerated)
@@ -56,6 +62,8 @@ TEST_F(TestGraphBuilder, CreateGraphWithTwoNodesAndAConnection_GraphIsCorrectlyG
 	EXPECT_EQ(1, res->GetLocations()[0]->GetId());
 	EXPECT_EQ(2, res->GetLocations()[1]->GetId());
 	EXPECT_EQ(2, res->GetLocations()[0]->GetConnections()[0].GetNode()->GetId());
+
+	delete res;
 }
 
 TEST_F(TestGraphBuilder, CreateGraphWithTwoNodesAndAConnectionWithPrice_GraphIsCorrectlyGenerated)
@@ -71,6 +79,8 @@ TEST_F(TestGraphBuilder, CreateGraphWithTwoNodesAndAConnectionWithPrice_GraphIsC
 	EXPECT_EQ(2, res->GetLocations()[1]->GetId());
 	EXPECT_EQ(2, res->GetLocations()[0]->GetConnections()[0].GetNode()->GetId());
 	EXPECT_EQ(5, res->GetLocations()[0]->GetConnections()[0].GetPrice());
+
+	delete res;
 }
 
 TEST_F(TestGraphBuilder, CreateGraphWithOneCriticalNode_GraphIsCorrectlyGenerated)
@@ -82,6 +92,8 @@ TEST_F(TestGraphBuilder, CreateGraphWithOneCriticalNode_GraphIsCorrectlyGenerate
 
 	EXPECT_EQ(1, res->GetLocations()[0]->GetId());
 	EXPECT_EQ(true, res->GetLocations()[0]->IsCritical());
+
+	delete res;
 }
 
 TEST_F(TestGraphBuilder, CreateGraphWithAConnectionBetweenACriticalNodeAndNormalNode_GraphIsCorrectlyGenerated)
@@ -97,4 +109,20 @@ TEST_F(TestGraphBuilder, CreateGraphWithAConnectionBetweenACriticalNodeAndNormal
 	EXPECT_EQ(2, res->GetLocations()[1]->GetId());
 	EXPECT_EQ(true, res->GetLocations()[0]->IsCritical());
 	EXPECT_EQ(2, res->GetLocations()[0]->GetConnections()[0].GetNode()->GetId());
+
+	delete res;
+}
+
+TEST_F(TestGraphBuilder, CreateGraphWithIdenticalNodes_GraphCorrectlyGenerated)
+{
+	GraphBuilder graphBuilder;
+
+	graphBuilder.AddNode(1);
+	graphBuilder.AddNode(1);
+	Graph* res = graphBuilder.GetGraph();
+
+	EXPECT_EQ(1, res->GetLocations()[0]->GetId());
+	EXPECT_EQ(1, res->GetLocations().size());
+
+	delete res;
 }
