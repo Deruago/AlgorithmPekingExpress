@@ -22,13 +22,14 @@ namespace PekingExpress
 		std::vector<std::pair<int, Node*>> path;
 		Couple* ourCouple = nullptr;
 	public:
-		Algorithm(Graph* graph_);
+		Algorithm(Graph* graph_, Couple* ourCouple_);
 		~Algorithm() = default;
 	public:
-		Move* DoAlgorithm();
+		void DoAlgorithm();
+		std::pair<int, Node*> GetNode(Node* node);
 		std::pair<int, Node*> MinDistance(std::vector<int> dist, std::vector<bool> sptSet, std::vector<std::pair<int, Node*>> nodes);
 		std::pair<int, Node*> GetVertex(std::vector<std::pair<int, Node*>> nodes, Connection con);
-		bool VertexIsValid(std::pair<int, Node*> v, std::pair<int, Node*> u);
+		std::vector<std::pair<int, Node*>> GetPath();
 	};
 }
 

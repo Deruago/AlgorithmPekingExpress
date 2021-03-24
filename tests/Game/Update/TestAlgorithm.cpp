@@ -11,9 +11,10 @@ public:
 	TestAlgorithm() = default;
 	~TestAlgorithm() = default;
 protected:
+	void PopulateGraph(GraphBuilder& graphBuilder);
 };
 
-void PopulateGraph(GraphBuilder& graphBuilder)
+void TestAlgorithm::PopulateGraph(GraphBuilder& graphBuilder)
 {
 	graphBuilder.AddNode(1);
 	graphBuilder.AddNode(2);
@@ -33,7 +34,7 @@ TEST_F(TestAlgorithm, TestConstructor_FieldsSetCorrectly)
 
 	Graph* graph = graphBuilder.GetGraph();
 
-	Algorithm alg = Algorithm(graph);
+	Algorithm alg = Algorithm(graph, nullptr);
 
 	for (auto val : alg.dist)
 	{
@@ -74,7 +75,7 @@ TEST_F(TestAlgorithm, GetNodeWithMinimalDistance_GetNodeSuccesfully)
 
 	Graph* graph = graphBuilder.GetGraph();
 
-	Algorithm alg = Algorithm(graph);
+	Algorithm alg = Algorithm(graph, nullptr);
 	std::pair<int, PekingExpress::Node*> res1 = alg.MinDistance(alg.dist, alg.sptSet, alg.nodes);
 
 	EXPECT_EQ(0, res1.first);
@@ -111,7 +112,7 @@ TEST_F(TestAlgorithm, GetAllNeighboursOfAVertex_GetVerticesSuccesfully)
 
 	Graph* graph = graphBuilder.GetGraph();
 
-	Algorithm alg = Algorithm(graph);
+	Algorithm alg = Algorithm(graph, nullptr);
 
 	std::pair<int, Node*> u = alg.MinDistance(alg.dist, alg.sptSet, alg.nodes);
 
@@ -130,14 +131,14 @@ TEST_F(TestAlgorithm, GetAllNeighboursOfAVertex_GetVerticesSuccesfully)
 	delete graph;
 }
 
-TEST_F(TestAlgorithm, GetCorrectDistanceOfSourceToTarget_GetDistanceSuccesfully)
+TEST_F(TestAlgorithm, GetCorrectDistanceAndPathOfSourceToTarget_GetDistanceAndPathSuccesfully)
 {
 	GraphBuilder graphBuilder;
 	PopulateGraph(graphBuilder);
 
 	Graph* graph = graphBuilder.GetGraph();
 
-	Algorithm alg = Algorithm(graph);
+	Algorithm alg = Algorithm(graph, nullptr);
 
 	alg.DoAlgorithm();
 
@@ -146,5 +147,63 @@ TEST_F(TestAlgorithm, GetCorrectDistanceOfSourceToTarget_GetDistanceSuccesfully)
 	EXPECT_EQ(2, alg.dist[2]);
 	EXPECT_EQ(3, alg.dist[3]);
 
+	EXPECT_EQ(0, alg.path[0].first);
+	EXPECT_EQ(1, alg.path[1].first);
+	EXPECT_EQ(2, alg.path[2].first);
+	EXPECT_EQ(3, alg.path[3].first);
+
 	delete graph;
+}
+
+TEST_F(TestAlgorithm, GetCorrectPathGivenTwoOptions_GetCorrectPath)
+{
+	GraphBuilder graphBuilder;
+
+	graphBuilder.AddNode(1);
+	graphBuilder.AddNode(2);
+	graphBuilder.AddNode(3);
+	graphBuilder.AddNode(4);
+
+	graphBuilder.AddConnection(1, 2, 2);
+	graphBuilder.AddConnection(1, 3, 3);
+	graphBuilder.AddConnection(3, 4, 1);
+	graphBuilder.AddConnection(2, 4, 4);
+
+	Graph* graph = graphBuilder.GetGraph();
+
+	Algorithm alg = Algorithm(graph, nullptr);
+
+	alg.DoAlgorithm();
+
+	EXPECT_EQ(0, alg.dist[0]);
+	EXPECT_EQ(2, alg.dist[1]);
+	EXPECT_EQ(3, alg.dist[2]);
+	EXPECT_EQ(4, alg.dist[3]);
+
+	EXPECT_EQ(0, alg.path[0].first);
+	EXPECT_EQ(2, alg.path[1].first);
+	EXPECT_EQ(3, alg.path[2].first);
+
+	delete graph;
+}
+
+TEST_F(TestAlgorithm, GetCorrectPathWithCouple_GetCorrectPath)
+{
+	GraphBuilder graphBuilder;
+	PopulateGraph(graphBuilder);
+
+	Graph* graph = graphBuilder.GetGraph();
+	Couple* couple = new Couple(100, 1, graph->GetLocations()[0]);
+
+	Algorithm alg = Algorithm(graph, nullptr);
+
+	alg.DoAlgorithm();
+
+	EXPECT_EQ(0, alg.path[0].first);
+	EXPECT_EQ(1, alg.path[1].first);
+	EXPECT_EQ(2, alg.path[2].first);
+	EXPECT_EQ(3, alg.path[3].first);
+
+	delete graph;
+	delete couple;
 }

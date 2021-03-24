@@ -3,7 +3,7 @@
 
 #include <climits>
 
-PekingExpress::Algorithm::Algorithm(Graph* graph_) : graph(graph_)
+PekingExpress::Algorithm::Algorithm(Graph* graph_, Couple* ourCouple_) : graph(graph_), ourCouple(ourCouple_)
 {
 	for (auto node : graph->GetLocations())
 	{
@@ -18,10 +18,33 @@ PekingExpress::Algorithm::Algorithm(Graph* graph_) : graph(graph_)
 		nodes[i].first = i;
 	}
 
-	dist[0] = 0;
+	if (ourCouple == nullptr)
+	{
+		dist[0] = 0;
+	}
+	else
+	{
+		std::pair<int, Node*> listNode = GetNode(ourCouple->GetCurrentPosition());
+		dist[listNode.first] = 0;
+	}
 }
 
-PekingExpress::Move* PekingExpress::Algorithm::DoAlgorithm()
+std::pair<int, PekingExpress::Node*> PekingExpress::Algorithm::GetNode(PekingExpress::Node* node)
+{
+	std::pair<int, PekingExpress::Node*> tempNode = { -1, nullptr };
+
+	for (auto listNode : nodes)
+	{
+		if (listNode.second == node)
+		{
+			tempNode = listNode;
+		}
+	}
+
+	return tempNode;
+}
+
+void PekingExpress::Algorithm::DoAlgorithm()
 {
 	for (size_t i = 0; i < graph->GetLocations().size(); i++)
 	{
@@ -81,4 +104,9 @@ std::pair<int, PekingExpress::Node*> PekingExpress::Algorithm::GetVertex(std::ve
 	}
 
 	return tempNode;
+}
+
+std::vector<std::pair<int, PekingExpress::Node*>> PekingExpress::Algorithm::GetPath()
+{
+	return path;
 }
