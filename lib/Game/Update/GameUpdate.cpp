@@ -1,5 +1,6 @@
 #include "PekingExpress/Game/Update/GameUpdate.h"
 #include "PekingExpress/Game/Update/Algorithm.h"
+#include <iostream>
 
 PekingExpress::GameUpdate::GameUpdate(Graph* graph_, Couple* ourCouple_, std::vector<Couple*> competitors_)
 	: graph(graph_),
@@ -61,6 +62,7 @@ PekingExpress::Connection* PekingExpress::GameUpdate::GetConnection(Node* startN
 	{
 		if (con.GetNode()->GetId() == endNode->GetId())
 		{
+			std::cout << "Found " << std::endl;
 			return new Connection(con.GetNode(), con.GetPrice());
 		}
 	}
@@ -95,23 +97,29 @@ PekingExpress::Node* PekingExpress::GameUpdate::GetNextNodeInPath()
 			return path[node.first + 1].second;
 		}
 	}
+
+	return nullptr;
 }
 
 PekingExpress::Move* PekingExpress::GameUpdate::NextMove()
 {
-	if (path.empty())
+	// Generates path from start position to desired goal
+	// optimised for price. Not speed
+	Algorithm algorithm = Algorithm(graph, ourCouple);
+	algorithm.DoAlgorithm();
+	path = algorithm.path;
+	for (auto node : path)
 	{
-		Algorithm algorithm = Algorithm(graph, ourCouple);
-		algorithm.DoAlgorithm();
-		path = algorithm.path;
+		std::cout << node.second->GetId() << " ";
 	}
+	std::cout << '\n';
 
 	Node* startNode = ourCouple->GetCurrentPosition();
 	Node* endNode = GetNextNodeInPath();
 
 	if (!IsVacantCriticalNode(endNode))
 	{
-		return new Move(startNode, startNode, 0);;
+		return new Move(startNode, startNode, 0);
 	}
 
 	Connection* con = GetConnection(startNode, endNode);

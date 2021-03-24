@@ -42,6 +42,11 @@ int main()
 	auto couple1 = new PekingExpress::Couple(budget, 1, newGraph->GetNode(startlocation));
 	auto couple2 = new PekingExpress::Couple(budget, 2, newGraph->GetNode(startlocation));
 
+	for (auto* node : newGraph->GetLocations())
+	{
+		std::cout << node->GetId() << " " << std::endl;
+	}
+	
 	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { couple2 });
 
 	std::vector<PekingExpress::Move*> path;
@@ -68,25 +73,20 @@ int main()
 	
 	while (true)
 	{
-		auto move = gameUpdate.NextMove();
+		auto* move = gameUpdate.NextMove();
+		std::cout << "Current move from: " << move->GetStartLocation()->GetId() << " To: " << move->GetEndLocation()->GetId() << '\n';
 		path.push_back(move);
 		gameUpdate.ApplyOurMove(move);
-		/*if (gameUpdate.CanOpponentMove(opponentsMove[currentLocation + 1]))
-		{
-			if ((currentLocation + 1) < opponentsMove.size())
-			{
-				currentLocation += 1;			
-			}
-		}*/
+
 		std::vector<PekingExpress::Node*> occupiedNodes;
-		for (auto opponentOccupy : opponentsMove[currentLocation])
+		for (auto* opponentOccupy : opponentsMove[currentLocation])
 		{
 			occupiedNodes.push_back(opponentOccupy);
 		}
 		occupiedNodes.push_back(move->GetEndLocation());
 		
 		gameUpdate.UpdateOccupiedLocations(occupiedNodes);
-		if (move->GetEndLocation()->GetId() == 88)
+		if (move->GetEndLocation()->GetId() == PekingExpress::Graph::GoalId())
 		{
 			win = true;
 			break;
@@ -101,10 +101,11 @@ int main()
 	}
 
 	std::cout << "Path taken:\n";
-	for (auto i : path)
+	for (auto* i : path)
 	{
-		std::cout << "Start: " << i->GetStartLocation() << " End: " << i->GetEndLocation() << "\n";
+		std::cout << "Start: " << i->GetStartLocation()->GetId() << " End: " << i->GetEndLocation()->GetId() << "\n";
 	}
+
 
 	std::cout << '\n';
 }

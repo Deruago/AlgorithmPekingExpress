@@ -28,6 +28,11 @@ namespace PekingExpress
 		 *	\details It loops through the locations, and returns a new vector with critical locations.
 		 */
 		const std::vector<Node*> GetCriticalLocations() const override;
+
+		constexpr static int GoalId()
+		{
+			return 88;
+		}
 	};
 }
 
