@@ -13,7 +13,21 @@ public:
 	TestGameUpdate() = default;
 	~TestGameUpdate() = default;
 protected:
+	void PopulateGraph(GraphBuilder& graphBuilder);
 };
+
+void TestGameUpdate::PopulateGraph(GraphBuilder& graphBuilder)
+{
+	graphBuilder.AddNode(1);
+	graphBuilder.AddNode(2);
+	graphBuilder.AddCriticalNode(3);
+	graphBuilder.AddNode(88);
+	graphBuilder.AddConnection(1, 2, 1);
+	graphBuilder.AddConnection(1, 3, 3);
+	graphBuilder.AddConnection(1, 88, 7);
+	graphBuilder.AddConnection(2, 3, 1);
+	graphBuilder.AddConnection(3, 88, 1);
+}
 
 // General class tests
 
@@ -31,133 +45,78 @@ TEST_F(TestGameUpdate, CreateNormalGameUpdate_GameUpdateIsCorrectlyCreated)
 	EXPECT_EQ(couple.GetId(), gameUpdate.GetAllCouples().at(0)->GetId());
 }
 
-//TEST_F(TestGameUpdate, UpdateCoupleLocation_CoupleLocationIsSuccesfullyUpdated)
-//{
-//	EXPECT_EQ(0, 0);
-//}
+TEST_F(TestGameUpdate, GeneralTestOne_MovesAreCorrectlyGenerated)
+{
+	GraphBuilder graphBuilder;
+	PopulateGraph(graphBuilder);
 
-//TEST_F(TestGameUpdate, UpdateCoupleLocation_CoupleLocationIsSuccesfullyUpdated)
-//{
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, UpdateCoupleWithNullpointerCouple_CoupleLocationIsNotUpdated)
-//{
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, UpdateCoupleWithLocationNotOnGraph_CoupleLocationIsNotUpdated)
-//{
-//
-//}
+	Graph* graph = graphBuilder.GetGraph();
+	Couple* couple = new Couple(5, 1, graph->GetLocations()[0]);
 
-// Calculate next move without price
+	GameUpdate gameUpdate = GameUpdate(graph, couple, { 0 });
 
-//TEST_F(TestGameUpdate, TestOne)
-//{
-//	GraphBuilder graphBuilder;
-//	graphBuilder.AddNode(1);
-//	graphBuilder.AddNode(2);
-//	graphBuilder.AddNode(3);
-//	graphBuilder.AddNode(4);
-//	graphBuilder.AddConnection(1, 2, 1);
-//	graphBuilder.AddConnection(1, 3, 3);
-//	graphBuilder.AddConnection(1, 4, 7);
-//	graphBuilder.AddConnection(2, 3, 1);
-//	graphBuilder.AddConnection(3, 4, 3);
-//
-//	Graph* graph = graphBuilder.GetGraph();
-//	Couple couple = Couple(0, 1, graph->GetLocations()[0]);
-//	GameUpdate gameUpdate = GameUpdate(graph, &couple, {});
-//
-//	const int res = gameUpdate.NextMove();
-//
-//	EXPECT_EQ(gameUpdate.GetPath(), std::vector<Node*>({ graph->GetLocations()[1], graph->GetLocations()[2], graph->GetLocations()[3] }));
-//
-//	delete graph;
-//}
+	Node* node1 = graph->GetLocations()[0];
+	Node* node2 = graph->GetLocations()[1];
+	Node* node3 = graph->GetLocations()[2];
+	Node* node4 = graph->GetLocations()[3];
 
-//TEST_F(TestGameUpdate, GetNextMoveBetweenTwoNodes_NextMoveSuccesfullyReturned)
-//{
-//	// X -- X -- X
-//	Node* node1 = new Node(1, {}, false);
-//	Node* node2 = new Node(2, {}, false);
-//	Node* node3 = new Node(3, {}, false);
-//	Connection con1 = Connection(node2, 0);
-//	Connection con2 = Connection(node3, 0);
-//	node1->AddConnection(con1);
-//	node2->AddConnection(con2);
-//	Graph graph = Graph({ node1, node2, node3 });
-//	Couple couple = Couple(0, 1, node1);
-//	GameUpdate gameUpdate = GameUpdate(&graph, &couple, {});
-//
-//	const int res = gameUpdate.NextMove();
-//
-//	EXPECT_EQ(gameUpdate.GetPath(), std::vector<Node*>({ node1, node2, node3 }));
-//}
+	// Begin turn 1
+	const Move* nextMove1 = gameUpdate.NextMove();
 
-//TEST_F(TestGameUpdate, GetNextMoveBetweenTwoCriticalNodes_NextMoveSuccesfullyReturned)
-//{
-//	// CN -- CN
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithThreeNodesAndACompetitorBlockingTheWay_NextMoveSuccesfullyReturned)
-//{
-//	// X -- X (C) -- X
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithTwoNodesAndACriticalNodeWhileACompetitorIsBlockingTheWay_NextMoveNotFound)
-//{
-//	// X -- CN (C) -- X
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithOneNode_NextMoveSuccesfullyReturned)
-//{
-//	// X
-//	EXPECT_EQ(0, 0);
-//}
-//
-//// With price
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithTwoNodesAndConnectionPriceLowerThanBudget_NextMoveSuccesfullyFound)
-//{
-//	// X -- X
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithTwoNodesAndConnectionPriceHigherThanBudget_NextMoveNotFound)
-//{
-//	// X -- X
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithThreeNodesAndConnectionToGoalPriceHigherThanMultipleNodeRoute_NextMoveSuccesfullyFound)
-//{
-//	// X -- X -- X
-//	// |_________| <- price higher
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithTwoNodesAndConnectionToGoalPriceLowerThanMultipleNodeRoute_NextMoveSuccesfullyFound)
-//{
-//	// X -- X -- X
-//	// |_________| <- price lower
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithThreeNodesWithCompetitorOnACriticalNodeAndConnectionToGoalNodeHasLowerPrice_NextMoveSuccesfullyFound)
-//{
-//	//  X -- CN (C) -- X
-//	//  |______________| <- lower price connection		
-//	EXPECT_EQ(0, 0);
-//}
-//
-//TEST_F(TestGameUpdate, GetNextMoveWithThreeNodesWithCompetitorOnACriticalNodeAndConnectionToGoalNodeHasHigherPricePrice_NextMoveSuccesfullyFound)
-//{
-//	//  X -- CN (C) -- X
-//	//  |______________| <- higher price connection		
-//	EXPECT_EQ(0, 0);
-//}
+	EXPECT_EQ(gameUpdate.GetPath()[0].second, nextMove1->GetStartLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove1->GetEndLocation());
+
+	couple->SetCurrentPosition(graph->GetLocations()[1]);
+	gameUpdate.UpdateOccupiedLocations({ node2, node3 });
+	// End turn 1
+
+	// Begin turn 2
+	Move* nextMove2 = gameUpdate.NextMove();
+
+	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove2->GetStartLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove2->GetEndLocation());
+
+	couple->SetCurrentPosition(graph->GetLocations()[1]);
+	gameUpdate.UpdateOccupiedLocations({ node3 });
+	// End turn 2
+
+	// Begin turn 3
+	Move* nextMove3 = gameUpdate.NextMove();
+
+	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove3->GetStartLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove3->GetEndLocation());
+
+	couple->SetCurrentPosition(graph->GetLocations()[1]);
+	gameUpdate.UpdateOccupiedLocations({ node4 });
+	// End turn 3
+
+	// Begin turn 4
+	Move* nextMove4 = gameUpdate.NextMove();
+
+	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove4->GetStartLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[2].second, nextMove4->GetEndLocation());
+
+	couple->SetCurrentPosition(graph->GetLocations()[2]);
+	gameUpdate.UpdateOccupiedLocations({ node4 });
+	// End turn 4
+
+	// Begin turn 5
+	Move* nextMove5 = gameUpdate.NextMove();
+
+	EXPECT_EQ(gameUpdate.GetPath()[2].second, nextMove5->GetStartLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[3].second, nextMove5->GetEndLocation());
+
+	couple->SetCurrentPosition(graph->GetLocations()[3]);
+	gameUpdate.UpdateOccupiedLocations({ node4 });
+	// End turn 5
+
+	EXPECT_EQ(gameUpdate.GetGraph()->GetLocations()[3], couple->GetCurrentPosition());
+
+	delete graph;
+	delete couple;
+	delete nextMove1;
+	delete nextMove2;
+	delete nextMove3;
+	delete nextMove4;
+	delete nextMove5;
+}

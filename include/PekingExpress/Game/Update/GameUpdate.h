@@ -15,30 +15,26 @@ namespace PekingExpress
 		Couple* ourCouple;
 		std::vector<Couple*> competitors;
 		std::vector<Node*> occupiedNodes;
-		std::vector<Node*> path;
+		std::vector<std::pair<int, Node*>> path;
 
-		Node* MinDistance(std::vector<int> dist, std::vector<bool> sptSet);
-		std::pair<int, Node*> MinDistance(std::vector<int> dist, std::vector<bool> sptSet, std::vector<std::pair<int, Node*>> nodes);
-		Connection* GetConnection(Node* startNode, Node* endNode);
 		bool IsVacantCriticalNode(Node* node);
-		void CreatePath(std::vector<std::pair<int, Node*>> parent, int j);
-		std::pair<int, Node*> GetVertex(std::vector<std::pair<int, Node*>> q, Connection con);
 
 	public:
 		GameUpdate(Graph* graph_, Couple* ourCouple_, std::vector<Couple*> competitors_);
-		~GameUpdate();
+		~GameUpdate() = default;
 
 		Couple* GetCompetitorById(const int id) const;
 		std::vector<Couple*> GetAllCouples() const;
 		const Graph* GetGraph() const;
-		void UpdateBudgetCompetitor(const int id, int newBudget);
 		void UpdateBudgetOur(int newBudget);
 		void UpdateOccupiedLocations(std::vector<Node*> nodes);
-		void UpdateOurLocation(const int location);
-		const int NextMove();
-		void ApplyOurMove(const int location);
+		void UpdateOurLocation(const Move* location);
+		Move* NextMove();
+		void ApplyOurMove(const Move* location);
+		Node* GetNextNodeInPath();
+		Connection* GetConnection(Node* startNode, Node* endNode);
 
-		const std::vector<Node*> GetPath() const;
+		const std::vector<std::pair<int, Node*>> GetPath() const;
 	};
 }
 
