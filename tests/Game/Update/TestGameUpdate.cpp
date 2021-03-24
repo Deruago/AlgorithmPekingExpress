@@ -2,6 +2,7 @@
 #include "PekingExpress/Game/Model/Graph.h"
 #include "PekingExpress/Game/Model/Couple.h"
 #include "PekingExpress/Game/Model/Connection.h"
+#include "PekingExpress/Game/Init/GraphBuilder.h"
 #include <gtest/gtest.h>
 
 using namespace PekingExpress;
@@ -52,24 +53,48 @@ TEST_F(TestGameUpdate, CreateNormalGameUpdate_GameUpdateIsCorrectlyCreated)
 
 // Calculate next move without price
 
-TEST_F(TestGameUpdate, GetNextMoveBetweenTwoNodes_NextMoveSuccesfullyReturned)
-{
-	// X -- X -- X
-	Node* node1 = new Node(1, {}, false);
-	Node* node2 = new Node(2, {}, false);
-	Node* node3 = new Node(3, {}, false);
-	Connection con1 = Connection(node2, 0);
-	Connection con2 = Connection(node3, 0);
-	node1->AddConnection(con1);
-	node2->AddConnection(con2);
-	Graph graph = Graph({ node1, node2, node3 });
-	Couple couple = Couple(0, 1, node1);
-	GameUpdate gameUpdate = GameUpdate(&graph, &couple, {});
+//TEST_F(TestGameUpdate, TestOne)
+//{
+//	GraphBuilder graphBuilder;
+//	graphBuilder.AddNode(1);
+//	graphBuilder.AddNode(2);
+//	graphBuilder.AddNode(3);
+//	graphBuilder.AddNode(4);
+//	graphBuilder.AddConnection(1, 2, 1);
+//	graphBuilder.AddConnection(1, 3, 3);
+//	graphBuilder.AddConnection(1, 4, 7);
+//	graphBuilder.AddConnection(2, 3, 1);
+//	graphBuilder.AddConnection(3, 4, 3);
+//
+//	Graph* graph = graphBuilder.GetGraph();
+//	Couple couple = Couple(0, 1, graph->GetLocations()[0]);
+//	GameUpdate gameUpdate = GameUpdate(graph, &couple, {});
+//
+//	const int res = gameUpdate.NextMove();
+//
+//	EXPECT_EQ(gameUpdate.GetPath(), std::vector<Node*>({ graph->GetLocations()[1], graph->GetLocations()[2], graph->GetLocations()[3] }));
+//
+//	delete graph;
+//}
 
-	const int res = gameUpdate.NextMove();
-
-	EXPECT_EQ(gameUpdate.GetPath(), std::vector<Node*>({ node1, node2, node3 }));
-}
+//TEST_F(TestGameUpdate, GetNextMoveBetweenTwoNodes_NextMoveSuccesfullyReturned)
+//{
+//	// X -- X -- X
+//	Node* node1 = new Node(1, {}, false);
+//	Node* node2 = new Node(2, {}, false);
+//	Node* node3 = new Node(3, {}, false);
+//	Connection con1 = Connection(node2, 0);
+//	Connection con2 = Connection(node3, 0);
+//	node1->AddConnection(con1);
+//	node2->AddConnection(con2);
+//	Graph graph = Graph({ node1, node2, node3 });
+//	Couple couple = Couple(0, 1, node1);
+//	GameUpdate gameUpdate = GameUpdate(&graph, &couple, {});
+//
+//	const int res = gameUpdate.NextMove();
+//
+//	EXPECT_EQ(gameUpdate.GetPath(), std::vector<Node*>({ node1, node2, node3 }));
+//}
 
 //TEST_F(TestGameUpdate, GetNextMoveBetweenTwoCriticalNodes_NextMoveSuccesfullyReturned)
 //{

@@ -5,8 +5,8 @@
 
 PekingExpress::GameUpdate::GameUpdate(Graph* graph_, Couple* ourCouple_, std::vector<Couple*> competitors_)
 	: graph(graph_),
-	  ourCouple(ourCouple_),
-	  competitors(competitors_)
+	ourCouple(ourCouple_),
+	competitors(competitors_)
 {
 }
 
@@ -38,7 +38,7 @@ const PekingExpress::Graph* PekingExpress::GameUpdate::GetGraph() const
 void PekingExpress::GameUpdate::UpdateBudgetCompetitor(const int id, int newBudget)
 {
 	Couple* couple = GetCompetitorById(id);
-	
+
 	if (couple != nullptr)
 	{
 		couple->SetBudget(newBudget);
@@ -75,7 +75,12 @@ PekingExpress::Node* PekingExpress::GameUpdate::MinDistance(std::vector<int> dis
 	int min = INT_MAX;
 	Node* min_index = nullptr;
 
-	for (auto vec : graph->GetLocations())
+	//for (auto el : dist)
+	//{
+	//	cout << el << endl;
+	//}
+
+	for (Node* vec : graph->GetLocations())
 	{
 		if (sptSet[vec->GetId() - 1] == false && dist[vec->GetId() - 1] <= min)
 		{
@@ -83,6 +88,8 @@ PekingExpress::Node* PekingExpress::GameUpdate::MinDistance(std::vector<int> dis
 			min_index = vec;
 		}
 	}
+
+	cout << min_index->GetId() << endl;
 
 	return min_index;
 }
@@ -113,15 +120,15 @@ bool PekingExpress::GameUpdate::IsVacantCriticalNode(Node* node)
 	return true;
 }
 
-void PekingExpress::GameUpdate::CreatePath(Node* parent[], int j)
+void PekingExpress::GameUpdate::CreatePath(std::vector<std::pair<int, Node*>> parent, int j)
 {
 	// Base Case : If j is source 
-	if (parent[j - 1]->GetId() == -1)
+	if (parent[j].first == -1)
 		return;
 
-	CreatePath(parent, parent[j - 1]->GetId());
+	CreatePath(parent, parent[j].first);
 
-	path.push_back(parent[j]);
+	cout << (parent[j].second) << " ";
 }
 
 const std::vector<PekingExpress::Node*> PekingExpress::GameUpdate::GetPath() const
@@ -129,47 +136,108 @@ const std::vector<PekingExpress::Node*> PekingExpress::GameUpdate::GetPath() con
 	return path;
 }
 
+std::pair<int, PekingExpress::Node*> PekingExpress::GameUpdate::MinDistance(std::vector<int> dist, std::vector<bool> sptSet, std::vector<std::pair<int, Node*>> nodes)
+{
+	std::pair<int, Node*> shortestDistanceNode = { -1, nullptr } ;
+	int shortestDistance = INT_MAX;
+
+	for (auto node : nodes)
+	{
+		if (sptSet[node.first] == false && dist[node.first] <= shortestDistance)
+		{
+			shortestDistance = dist[node.first];
+			shortestDistanceNode = node;
+		}
+	}
+
+	return shortestDistanceNode;
+}
+
 const int PekingExpress::GameUpdate::NextMove()
 {
-	std::vector<int> dist(graph->GetLocations().size(), INT_MAX);
-	std::vector<bool> sptSet(graph->GetLocations().size(), false);
-	std::vector<Node*> parent(graph->GetLocations().size(), new Node(-1, {}, false));
+	std::vector<int> dist;
+	std::vector<bool> sptSet;
 
-	dist[ourCouple->GetCurrentPosition()->GetId() - 1] = 0;
+	std::vector<std::pair<int, Node*>> prev;
+	std::vector<std::pair<int, Node*>> q;
 
-	for (int i = 0; i < graph->GetLocations().size() - 1; i++)
+	std::vector<std::pair<int, Node*>> nodes;
+
+	for (auto node : graph->GetLocations())
 	{
-		Node* u = MinDistance(dist, sptSet);
+		dist.push_back(INT_MAX);
+		sptSet.push_back(false);
+		nodes.push_back({ -1, node });
 
-		if (u == nullptr)
+		prev.push_back({ -1, nullptr });
+		q.push_back({ 0, node });
+	}
+
+	for (size_t i = 0; i < graph->GetLocations().size(); i++)
+	{
+		nodes[i].first = i;
+
+		q[i].first = i;
+	}
+
+	dist[0] = 0;
+
+	for (size_t i = 0; i < graph->GetLocations().size() - 1; i++)
+	{
+		std::pair<int, Node*> u = MinDistance(dist, sptSet, nodes);
+
+		sptSet[u.first] = true;
+
+		for (auto neighbour : u.second->GetConnections())
 		{
-			return -1;
-		}
+			std::pair<int, Node*> v = GetVertex(nodes, neighbour);	
 
-		sptSet[u->GetId() - 1] = true;
-
-		for (auto vec : graph->GetLocations())
-		{
-			Connection* tempCon = GetConnection(u, vec);
-
-			if (!sptSet[vec->GetId() - 1] && tempCon != nullptr && dist[u->GetId() - 1] && dist[u->GetId() - 1] + tempCon->GetPrice() < dist[vec->GetId() - 1] && IsVacantCriticalNode(u))
+			if (!sptSet[v.first] && dist[u.first] != INT_MAX
+				&& dist[u.first] + neighbour.GetPrice() < dist[v.first])
 			{
-				parent[vec->GetId() - 1] = u;
-				dist[vec->GetId() - 1] = dist[u->GetId() - 1] + tempCon->GetPrice();
+				prev[v.first] = u;
+				dist[v.first] = dist[u.first] + neighbour.GetPrice();
 			}
 		}
 	}
 
-	for (auto node : parent)
+	cout << endl;
+
+	for (auto el : dist)
 	{
-		cout << node->GetId();
+		cout << el << " ";
+	}
+
+	cout << endl << endl;
+
+	for (auto el : prev)
+	{
+		if (!prev.empty())
+			cout << el.first << " ";
 	}
 
 	cout << endl;
 
-	CreatePath(parent.data(), graph->GetLocations().back()->GetId());
+	CreatePath(prev, graph->GetLocations().back()->GetId());
 
-	return parent[0]->GetId();
+	cout << endl;
+
+	return 0;
+}
+
+std::pair<int, PekingExpress::Node*> PekingExpress::GameUpdate::GetVertex(std::vector<std::pair<int, Node*>> q, Connection con)
+{
+	std::pair<int, PekingExpress::Node*> tempNode = { -1, nullptr };
+
+	for (auto node : q)
+	{
+		if (node.second == con.GetNode())
+		{
+			tempNode = node;
+		}
+	}
+
+	return tempNode;
 }
 
 void PekingExpress::GameUpdate::ApplyOurMove(const int location)
