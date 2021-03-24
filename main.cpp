@@ -44,8 +44,8 @@ int main()
 
 	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { couple2 });
 
-	//std::vector<PekingExpress::Move*> path;
-	std::vector<int> path;
+	std::vector<PekingExpress::Move*> path;
+	//std::vector<int> path;
 
 	std::vector<std::vector<PekingExpress::Node*>> opponentsMove = {
 		{
@@ -71,16 +71,22 @@ int main()
 		auto move = gameUpdate.NextMove();
 		path.push_back(move);
 		gameUpdate.ApplyOurMove(move);
-		if (gameUpdate.CanOpponentMove(opponentsMove[currentLocation + 1]))
+		/*if (gameUpdate.CanOpponentMove(opponentsMove[currentLocation + 1]))
 		{
 			if ((currentLocation + 1) < opponentsMove.size())
 			{
 				currentLocation += 1;			
 			}
+		}*/
+		std::vector<PekingExpress::Node*> occupiedNodes;
+		for (auto opponentOccupy : opponentsMove[currentLocation])
+		{
+			occupiedNodes.push_back(opponentOccupy);
 		}
+		occupiedNodes.push_back(move->GetEndLocation());
 		
-		gameUpdate.UpdateOccupiedLocations({ opponentsMove[currentLocation], move });
-		if (move == 88)
+		gameUpdate.UpdateOccupiedLocations(occupiedNodes);
+		if (move->GetEndLocation()->GetId() == 88)
 		{
 			win = true;
 			break;
@@ -90,12 +96,14 @@ int main()
 			win = false;
 			break;
 		}
+		
+		currentLocation += 1;
 	}
 
 	std::cout << "Path taken:\n";
 	for (auto i : path)
 	{
-		std::cout << i << " ";
+		std::cout << "Start: " << i->GetStartLocation() << " End: " << i->GetEndLocation() << "\n";
 	}
 
 	std::cout << '\n';
