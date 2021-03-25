@@ -16,11 +16,11 @@ namespace PekingExpress
 
 		std::vector<int> dist;
 		std::vector<bool> sptSet;
+		Couple* ourCouple;
 		std::vector<std::pair<int, Node*>> prev;
 		std::vector<std::pair<int, Node*>> nodes;
 
 		std::vector<std::pair<int, Node*>> path;
-		Couple* ourCouple = nullptr;
 	public:
 		Algorithm(Graph* graph_, Couple* ourCouple_);
 		~Algorithm() = default;
@@ -30,6 +30,7 @@ namespace PekingExpress
 		std::pair<int, Node*> MinDistance(std::vector<int> dist, std::vector<bool> sptSet, std::vector<std::pair<int, Node*>> nodes);
 		std::pair<int, Node*> GetVertex(std::vector<std::pair<int, Node*>> nodes, Connection con);
 		std::vector<std::pair<int, Node*>> GetPath();
+		int LookForEndNode();
 	};
 }
 

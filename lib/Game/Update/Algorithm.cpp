@@ -2,6 +2,7 @@
 #include "PekingExpress/Game/Update/Algorithm.h"
 
 #include <climits>
+#include <iostream>
 
 PekingExpress::Algorithm::Algorithm(Graph* graph_, Couple* ourCouple_) : graph(graph_), ourCouple(ourCouple_)
 {
@@ -18,14 +19,14 @@ PekingExpress::Algorithm::Algorithm(Graph* graph_, Couple* ourCouple_) : graph(g
 		nodes[i].first = i;
 	}
 
-	if (ourCouple == nullptr)
+	if (ourCouple != nullptr)
 	{
-		dist[0] = 0;
+		int val = GetNode(ourCouple->GetCurrentPosition()).first;
+		dist[val] = 0;
 	}
 	else
 	{
-		std::pair<int, Node*> listNode = GetNode(ourCouple->GetCurrentPosition());
-		dist[listNode.first] = 0;
+		dist[0] = 0;
 	}
 }
 
@@ -42,6 +43,19 @@ std::pair<int, PekingExpress::Node*> PekingExpress::Algorithm::GetNode(PekingExp
 	}
 
 	return tempNode;
+}
+
+int PekingExpress::Algorithm::LookForEndNode()
+{
+	for (auto node : nodes)
+	{
+		if (node.second->GetId() == 88)
+		{
+			return node.first;
+		}
+	}
+
+	return nodes[nodes.size() - 1].first;
 }
 
 void PekingExpress::Algorithm::DoAlgorithm()
@@ -65,7 +79,7 @@ void PekingExpress::Algorithm::DoAlgorithm()
 		}
 	}
 
-	std::pair<int, Node*> u = nodes[graph->GetLocations().size() - 1];
+	std::pair<int, Node*> u = nodes[LookForEndNode()];
 
 	while (u.second != nullptr)
 	{

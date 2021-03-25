@@ -55,30 +55,24 @@ void PekingExpress::GameUpdate::UpdateOurLocation(const Move* location)
 	}
 }
 
-PekingExpress::Connection* PekingExpress::GameUpdate::GetConnection(Node* startNode, Node* endNode)
+#include <iostream>
+
+bool PekingExpress::GameUpdate::IsOccupiedCriticalNode(Node* node)
 {
-	for (Connection con : startNode->GetConnections())
+	if (node == nullptr)
 	{
-		if (con.GetNode()->GetId() == endNode->GetId())
-		{
-			return new Connection(con.GetNode(), con.GetPrice());
-		}
+		return false;
 	}
 
-	return nullptr;
-}
-
-bool PekingExpress::GameUpdate::IsVacantCriticalNode(Node* node)
-{
 	for (auto ocNode : occupiedNodes)
 	{
-		if (ocNode->IsCritical() && ocNode->GetId() == node->GetId())
+		if (ocNode->GetId() == node->GetId() && ocNode->IsCritical())
 		{
-			return false;
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 const std::vector<std::pair<int, PekingExpress::Node*>> PekingExpress::GameUpdate::GetPath() const
@@ -86,15 +80,47 @@ const std::vector<std::pair<int, PekingExpress::Node*>> PekingExpress::GameUpdat
 	return path;
 }
 
+void PekingExpress::GameUpdate::SetTargetNode(Node* targetNode_)
+{
+	targetNode = targetNode_;
+}
+
 PekingExpress::Node* PekingExpress::GameUpdate::GetNextNodeInPath()
 {
-	for (auto node : path)
+	for (size_t i = 0; i < path.size()-1; i++)
 	{
-		if (node.second == ourCouple->GetCurrentPosition())
+		if (path[i].second == ourCouple->GetCurrentPosition())
 		{
-			return path[node.first + 1].second;
+			if (path[i + 1].second != nullptr)
+			{
+				return path[i + 1].second;
+			}
+			else
+			{
+				return path[i].second;
+			}
 		}
 	}
+
+	return nullptr;
+}
+
+PekingExpress::Connection* PekingExpress::GameUpdate::GetConnection(Node* startNode, Node* endNode)
+{
+	if (startNode == nullptr || endNode == nullptr)
+	{
+		return nullptr;
+	}
+
+	for (Connection con : startNode->GetConnections())
+	{
+		if (con.GetNode() == endNode)
+		{
+			return new Connection(con.GetNode(), con.GetPrice());
+		}
+	}
+
+	return nullptr;
 }
 
 PekingExpress::Move* PekingExpress::GameUpdate::NextMove()
@@ -106,17 +132,26 @@ PekingExpress::Move* PekingExpress::GameUpdate::NextMove()
 		path = algorithm.path;
 	}
 
+	for (auto node : path)
+	{
+		std::cout << node.second->GetId() << std::endl;
+	}
+
 	Node* startNode = ourCouple->GetCurrentPosition();
 	Node* endNode = GetNextNodeInPath();
 
-	if (!IsVacantCriticalNode(endNode))
+	if (IsOccupiedCriticalNode(endNode))
 	{
-		return new Move(startNode, startNode, 0);;
+		return new Move(startNode, startNode, 0);
 	}
 
+	int price = 0;
 	Connection* con = GetConnection(startNode, endNode);
-	int price = con->GetPrice();
-	delete con;
+	if (con != nullptr)
+	{
+		int price = con->GetPrice();
+		delete con;
+	}
 
 	return new Move(startNode, endNode, price);
 }

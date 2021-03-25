@@ -40,44 +40,54 @@ int main()
 	auto* newGraph = graph.ConvertJsonToGraph(inputString);
 
 	auto couple1 = new PekingExpress::Couple(budget, 1, newGraph->GetNode(startlocation));
-	auto couple2 = new PekingExpress::Couple(budget, 2, newGraph->GetNode(startlocation));
 
-	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { couple2 });
+	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { 0 });
 
 	std::vector<PekingExpress::Move*> path;
-	//std::vector<int> path;
 
 	std::vector<std::vector<PekingExpress::Node*>> opponentsMove = {
-		{
-			newGraph->GetNodes({2, 3})
-		},
-		{
-			newGraph->GetNodes({3})
-		},
-		{
-			newGraph->GetNodes({88})
-		},
-		{
-			newGraph->GetNodes({88})
-		}
+		//{
+		//	newGraph->GetNodes({4, 9, 8, 88})
+		//},
+		//{
+		//	newGraph->GetNodes({6, 1, 9})
+		//},
+		//{
+		//	newGraph->GetNodes({4, 1, 3, 8, 9})
+		//},
+		//{
+		//	newGraph->GetNodes({4, 5, 1, 9, 3})
+		//},
+		//{
+		//	newGraph->GetNodes({3, 6, 1, 88, 5})
+		//},
+		//{
+		//	newGraph->GetNodes({5, 4, 7, 3, 88})
+		//},
+		//{
+		//	newGraph->GetNodes({4, 2, 5, 7})
+		//},
+		//{
+		//	newGraph->GetNodes({9, 2, 8, 3})
+		//},
+		//{
+		//	newGraph->GetNodes({4, 1, 6, 5})
+		//},
+		//{
+		//	newGraph->GetNodes({4, 5, 9, 88, 6})
+		//}
 	};
 
 	int currentLocation = 0;
 
 	bool win = false;
-	
+
 	while (true)
 	{
 		auto move = gameUpdate.NextMove();
 		path.push_back(move);
 		gameUpdate.ApplyOurMove(move);
-		/*if (gameUpdate.CanOpponentMove(opponentsMove[currentLocation + 1]))
-		{
-			if ((currentLocation + 1) < opponentsMove.size())
-			{
-				currentLocation += 1;			
-			}
-		}*/
+
 		std::vector<PekingExpress::Node*> occupiedNodes;
 		for (auto opponentOccupy : opponentsMove[currentLocation])
 		{
@@ -103,7 +113,7 @@ int main()
 	std::cout << "Path taken:\n";
 	for (auto i : path)
 	{
-		std::cout << "Start: " << i->GetStartLocation() << " End: " << i->GetEndLocation() << "\n";
+		std::cout << "Start: " << i->GetStartLocation()->GetId() << " End: " << i->GetEndLocation()->GetId() << "\n";
 	}
 
 	std::cout << '\n';
