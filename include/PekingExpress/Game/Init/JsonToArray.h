@@ -26,9 +26,7 @@ namespace PekingExpress
 				for (auto element : item)
 				{
 					tmp.push_back(graph.GetNode(element.asInt()));
-					//std::cout << element.asInt() << ' ';
 				}
-				//std::cout << "end\n";
 				turns.push_back(tmp);
 			}
 			

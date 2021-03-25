@@ -5,6 +5,8 @@
 
 #include "PekingExpress/Game/Init/JsonToArray.h"
 
+constexpr static bool stopIfOpponentIsAtEnd = false;
+
 bool OpponentsAtEnding(const std::vector<std::vector<PekingExpress::Node*>>& vector, int currentLocation)
 {
 	for (auto* i : vector[currentLocation])
@@ -23,6 +25,8 @@ enum class Test
 	two,
 	three,
 	four,
+	six,
+	seven,
 };
 
 PekingExpress::Graph* GetGraph(Test testType)
@@ -42,6 +46,12 @@ PekingExpress::Graph* GetGraph(Test testType)
 		break;
 	case Test::four:
 		filePath = "./data4.json";
+		break;
+	case Test::six:
+		filePath = "./data6.json";
+		break;
+	case Test::seven:
+		filePath = "./data7.json";
 		break;
 	}
 	input.open(filePath);
@@ -78,6 +88,12 @@ std::vector<std::vector<PekingExpress::Node*>> GetOpponentTurns(Test testType, P
 		break;
 	case Test::four:
 		filePath = "./opponent4.json";
+		break;
+	case Test::six:
+		filePath = "./opponent6.json";
+		break;
+	case Test::seven:
+		filePath = "./opponent7.json";
 		break;
 	}
 	input.open(filePath);
@@ -117,7 +133,10 @@ void PrintResult(std::vector<PekingExpress::Move*> path, bool win)
 
 int main()
 {
-	const Test TestType = Test::four;
+	std::cout << "Input test number: ";
+	unsigned testnumber = 0;
+	std::cin >> testnumber;
+	const Test TestType = (Test)testnumber;
 	
 	std::cout << "Input startlocation: ";
 	int startlocation = 0;
@@ -144,7 +163,6 @@ int main()
 	while (true)
 	{
 		auto* move = gameUpdate.NextMove();
-		//std::cout << "Current move from: " << move->GetStartLocation()->GetId() << " To: " << move->GetEndLocation()->GetId() << '\n';
 		path.push_back(move);
 		gameUpdate.ApplyOurMove(move);
 
@@ -161,7 +179,7 @@ int main()
 			win = true;
 			break;
 		}
-		else if (OpponentsAtEnding(opponentsMove, currentLocation))
+		else if (OpponentsAtEnding(opponentsMove, currentLocation) && stopIfOpponentIsAtEnd)
 		{
 			win = false;
 			break;
