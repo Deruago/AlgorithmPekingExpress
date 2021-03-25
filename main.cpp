@@ -95,6 +95,26 @@ std::vector<std::vector<PekingExpress::Node*>> GetOpponentTurns(Test testType, P
 	return PekingExpress::JsonToArray().GetOpponentsMoves(inputString, *graph);
 }
 
+void PrintResult(std::vector<PekingExpress::Move*> path, bool win)
+{
+	std::cout << "\nResults\n";
+	if (win)
+	{
+		std::cout << "You win!\n";
+	}
+	else
+	{
+		std::cout << "You lose!\n";
+	}
+	std::cout << "Path taken:\n";
+	for (auto* i : path)
+	{
+		std::cout << "\tStart: " << i->GetStartLocation()->GetId() << " End: " << i->GetEndLocation()->GetId() << "\n";
+	}
+
+	std::cout << '\n';
+}
+
 int main()
 {
 	const Test TestType = Test::four;
@@ -106,7 +126,6 @@ int main()
 	std::cout << "Input budget: ";
 	int budget = 0;
 	std::cin >> budget;
-	
 	
 	auto* newGraph = GetGraph(TestType);
 
@@ -125,7 +144,7 @@ int main()
 	while (true)
 	{
 		auto* move = gameUpdate.NextMove();
-		std::cout << "Current move from: " << move->GetStartLocation()->GetId() << " To: " << move->GetEndLocation()->GetId() << '\n';
+		//std::cout << "Current move from: " << move->GetStartLocation()->GetId() << " To: " << move->GetEndLocation()->GetId() << '\n';
 		path.push_back(move);
 		gameUpdate.ApplyOurMove(move);
 
@@ -153,20 +172,5 @@ int main()
 		}
 	}
 
-	if (win)
-	{
-		std::cout << "You win!\n";
-	}
-	else
-	{
-		std::cout << "You lose!\n";
-	}
-	std::cout << "Path taken:\n";
-	for (auto* i : path)
-	{
-		std::cout << "Start: " << i->GetStartLocation()->GetId() << " End: " << i->GetEndLocation()->GetId() << "\n";
-	}
-
-
-	std::cout << '\n';
+	PrintResult(path, win);
 }
