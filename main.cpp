@@ -41,50 +41,41 @@ int main()
 
 	auto couple1 = new PekingExpress::Couple(budget, 1, newGraph->GetNode(startlocation));
 
-<<<<<<< HEAD
 	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { 0 });
-=======
-	for (auto* node : newGraph->GetLocations())
-	{
-		std::cout << node->GetId() << " " << std::endl;
-	}
-	
-	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { couple2 });
->>>>>>> 73e74dff884c0844c867a31e1c32cb2c6282b5d6
 
 	std::vector<PekingExpress::Move*> path;
 
 	std::vector<std::vector<PekingExpress::Node*>> opponentsMove = {
-		//{
-		//	newGraph->GetNodes({4, 9, 8, 88})
-		//},
-		//{
-		//	newGraph->GetNodes({6, 1, 9})
-		//},
-		//{
-		//	newGraph->GetNodes({4, 1, 3, 8, 9})
-		//},
-		//{
-		//	newGraph->GetNodes({4, 5, 1, 9, 3})
-		//},
-		//{
-		//	newGraph->GetNodes({3, 6, 1, 88, 5})
-		//},
-		//{
-		//	newGraph->GetNodes({5, 4, 7, 3, 88})
-		//},
-		//{
-		//	newGraph->GetNodes({4, 2, 5, 7})
-		//},
-		//{
-		//	newGraph->GetNodes({9, 2, 8, 3})
-		//},
-		//{
-		//	newGraph->GetNodes({4, 1, 6, 5})
-		//},
-		//{
-		//	newGraph->GetNodes({4, 5, 9, 88, 6})
-		//}
+		{
+			newGraph->GetNodes({4, 9, 8, 88})
+		},
+		{
+			newGraph->GetNodes({6, 1, 9})
+		},
+		{
+			newGraph->GetNodes({4, 1, 3, 8, 9})
+		},
+		{
+			newGraph->GetNodes({4, 5, 1, 9, 3})
+		},
+		{
+			newGraph->GetNodes({3, 6, 1, 88, 5})
+		},
+		{
+			newGraph->GetNodes({5, 4, 7, 3, 88})
+		},
+		{
+			newGraph->GetNodes({4, 2, 5, 7})
+		},
+		{
+			newGraph->GetNodes({9, 2, 8, 3})
+		},
+		{
+			newGraph->GetNodes({4, 1, 6, 5})
+		},
+		{
+			newGraph->GetNodes({4, 5, 9, 88, 6})
+		}
 	};
 
 	int currentLocation = 0;

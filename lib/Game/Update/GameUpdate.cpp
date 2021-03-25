@@ -128,16 +128,6 @@ PekingExpress::Move* PekingExpress::GameUpdate::NextMove()
 	Algorithm algorithm = Algorithm(graph, ourCouple);
 	algorithm.DoAlgorithm();
 	path = algorithm.path;
-	for (auto node : path)
-	{
-		std::cout << node.second->GetId() << " ";
-	}
-	std::cout << '\n';
-
-	for (auto node : path)
-	{
-		std::cout << node.second->GetId() << std::endl;
-	}
 
 	Node* startNode = ourCouple->GetCurrentPosition();
 	Node* endNode = GetNextNodeInPath();
