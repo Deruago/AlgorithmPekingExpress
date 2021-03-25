@@ -3,6 +3,8 @@
 #include "PekingExpress/Game/Update/GameUpdate.h"
 #include <fstream>
 
+#include "PekingExpress/Game/Init/JsonToArray.h"
+
 bool OpponentsAtEnding(const std::vector<std::vector<PekingExpress::Node*>>& vector, int currentLocation)
 {
 	for (auto* i : vector[currentLocation])
@@ -15,19 +17,88 @@ bool OpponentsAtEnding(const std::vector<std::vector<PekingExpress::Node*>>& vec
 	return false;
 }
 
-int main()
+enum class Test
+{
+	one,
+	two,
+	three,
+	four,
+};
+
+PekingExpress::Graph* GetGraph(Test testType)
 {
 	std::ifstream input;
-	input.open("./data.json");
-	
+	std::string filePath;
+	switch(testType)
+	{
+	case Test::one:
+		filePath = "./data1.json";
+		break;
+	case Test::two:
+		filePath = "./data2.json";
+		break;
+	case Test::three:
+		filePath = "./data3.json";
+		break;
+	case Test::four:
+		filePath = "./data4.json";
+		break;
+	}
+	input.open(filePath);
+
 	std::string inputString;
 	std::string line;
 
 	while (getline(input, line))
 	{
 		inputString += line;
+		line.clear();
 	}
+	input.close();
+	
+	PekingExpress::JsonToGraph graph;
+	
+	return graph.ConvertJsonToGraph(inputString);
+}
 
+std::vector<std::vector<PekingExpress::Node*>> GetOpponentTurns(Test testType, PekingExpress::Graph* graph)
+{
+	std::ifstream input;
+	std::string filePath;
+	switch (testType)
+	{
+	case Test::one:
+		filePath = "./opponent1.json";
+		break;
+	case Test::two:
+		filePath = "./opponent2.json";
+		break;
+	case Test::three:
+		filePath = "./opponent3.json";
+		break;
+	case Test::four:
+		filePath = "./opponent4.json";
+		break;
+	}
+	input.open(filePath);
+
+	std::string inputString;
+	std::string line;
+
+	while (getline(input, line))
+	{
+		inputString += line;
+		line.clear();
+	}
+	input.close();
+
+	return PekingExpress::JsonToArray().GetOpponentsMoves(inputString, *graph);
+}
+
+int main()
+{
+	const Test TestType = Test::four;
+	
 	std::cout << "Input startlocation: ";
 	int startlocation = 0;
 	std::cin >> startlocation;
@@ -36,47 +107,16 @@ int main()
 	int budget = 0;
 	std::cin >> budget;
 	
-	PekingExpress::JsonToGraph graph;
-	auto* newGraph = graph.ConvertJsonToGraph(inputString);
+	
+	auto* newGraph = GetGraph(TestType);
 
 	auto couple1 = new PekingExpress::Couple(budget, 1, newGraph->GetNode(startlocation));
 
 	PekingExpress::GameUpdate gameUpdate(newGraph, couple1, { 0 });
 
-	std::vector<PekingExpress::Move*> path;
+	auto opponentsMove = GetOpponentTurns(TestType, newGraph);
 
-	std::vector<std::vector<PekingExpress::Node*>> opponentsMove = {
-		{
-			newGraph->GetNodes({4, 9, 8, 88})
-		},
-		{
-			newGraph->GetNodes({6, 1, 9})
-		},
-		{
-			newGraph->GetNodes({4, 1, 3, 8, 9})
-		},
-		{
-			newGraph->GetNodes({4, 5, 1, 9, 3})
-		},
-		{
-			newGraph->GetNodes({3, 6, 1, 88, 5})
-		},
-		{
-			newGraph->GetNodes({5, 4, 7, 3, 88})
-		},
-		{
-			newGraph->GetNodes({4, 2, 5, 7})
-		},
-		{
-			newGraph->GetNodes({9, 2, 8, 3})
-		},
-		{
-			newGraph->GetNodes({4, 1, 6, 5})
-		},
-		{
-			newGraph->GetNodes({4, 5, 9, 88, 6})
-		}
-	};
+	std::vector<PekingExpress::Move*> path;
 
 	int currentLocation = 0;
 
@@ -95,7 +135,7 @@ int main()
 			occupiedNodes.push_back(opponentOccupy);
 		}
 		occupiedNodes.push_back(move->GetEndLocation());
-		
+
 		gameUpdate.UpdateOccupiedLocations(occupiedNodes);
 		if (move->GetEndLocation()->GetId() == PekingExpress::Graph::GoalId())
 		{
@@ -107,10 +147,20 @@ int main()
 			win = false;
 			break;
 		}
-		
-		currentLocation += 1;
+		if ((currentLocation + 1) < opponentsMove.size())
+		{
+			currentLocation += 1;
+		}
 	}
 
+	if (win)
+	{
+		std::cout << "You win!\n";
+	}
+	else
+	{
+		std::cout << "You lose!\n";
+	}
 	std::cout << "Path taken:\n";
 	for (auto* i : path)
 	{
