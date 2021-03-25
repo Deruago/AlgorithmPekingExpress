@@ -2,7 +2,6 @@
 #include "PekingExpress/Game/Update/Algorithm.h"
 
 #include <climits>
-#include <iostream>
 
 PekingExpress::Algorithm::Algorithm(Graph* graph_, Couple* ourCouple_) : graph(graph_), ourCouple(ourCouple_)
 {

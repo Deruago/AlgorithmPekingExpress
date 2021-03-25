@@ -55,8 +55,6 @@ void PekingExpress::GameUpdate::UpdateOurLocation(const Move* location)
 	}
 }
 
-#include <iostream>
-
 bool PekingExpress::GameUpdate::IsOccupiedCriticalNode(Node* node)
 {
 	if (node == nullptr)
@@ -125,12 +123,16 @@ PekingExpress::Connection* PekingExpress::GameUpdate::GetConnection(Node* startN
 
 PekingExpress::Move* PekingExpress::GameUpdate::NextMove()
 {
-	if (path.empty())
+	// Generates path from start position to desired goal
+	// optimised for price. Not speed
+	Algorithm algorithm = Algorithm(graph, ourCouple);
+	algorithm.DoAlgorithm();
+	path = algorithm.path;
+	for (auto node : path)
 	{
-		Algorithm algorithm = Algorithm(graph, ourCouple);
-		algorithm.DoAlgorithm();
-		path = algorithm.path;
+		std::cout << node.second->GetId() << " ";
 	}
+	std::cout << '\n';
 
 	for (auto node : path)
 	{

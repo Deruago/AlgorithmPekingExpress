@@ -1,5 +1,7 @@
 #include "PekingExpress/Game/Model/Node.h"
 
+#include <iostream>
+
 PekingExpress::Node::Node(const int id_, const std::vector<Connection>& connections_, bool isCritical)
 	:	Id_(id_),
 		Critical(isCritical),
@@ -9,6 +11,7 @@ PekingExpress::Node::Node(const int id_, const std::vector<Connection>& connecti
 
 void PekingExpress::Node::AddConnection(Connection connection)
 {
+	std::cout << "Connection added!" << " From: " << GetId() << " To: " << connection.GetNode()->GetId() << '\n';
 	Connections.push_back(connection);
 }
 

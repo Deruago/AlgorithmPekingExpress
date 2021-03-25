@@ -27,7 +27,8 @@ PekingExpress::Node* PekingExpress::Graph::GetNode(int id) const
 			return node;
 		}
 	}
-	return nullptr;
+
+	throw std::exception{};
 }
 
 std::vector<PekingExpress::Node*> PekingExpress::Graph::GetNodes(const std::vector<int>& ids) const
