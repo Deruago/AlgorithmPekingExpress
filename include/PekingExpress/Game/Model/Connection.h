@@ -8,13 +8,13 @@ namespace PekingExpress
 	class Connection
 	{
 	private:
-		const Node* Node_;
+		Node* Node_;
 		const int Price_;
 	public:
 		Connection(Node* const node_, const int price_ = 0);
 		~Connection() = default;
 	public:
-		const Node* GetNode() const;
+		Node* GetNode() const;
 		int GetPrice() const;
 
 		bool operator==(const Connection connection) const

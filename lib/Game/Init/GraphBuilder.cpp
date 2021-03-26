@@ -21,6 +21,10 @@ void PekingExpress::GraphBuilder::AddNode(int nodeId, bool isCritical)
 	}
 
 	Node* node = new Node(nodeId, {}, isCritical);
+	if (node == nullptr)
+	{
+		return;
+	}
 	graphNodes.push_back(node);
 }
 
