@@ -19,8 +19,8 @@ protected:
 void TestGameUpdate::PopulateGraph(GraphBuilder& graphBuilder)
 {
 	graphBuilder.AddNode(1);
-	graphBuilder.AddNode(2);
 	graphBuilder.AddCriticalNode(3);
+	graphBuilder.AddNode(2);
 	graphBuilder.AddNode(88);
 	graphBuilder.AddConnection(1, 2, 1);
 	graphBuilder.AddConnection(1, 3, 3);
@@ -56,57 +56,57 @@ TEST_F(TestGameUpdate, GeneralTestOne_MovesAreCorrectlyGenerated)
 	GameUpdate gameUpdate = GameUpdate(graph, couple, { 0 });
 
 	Node* node1 = graph->GetLocations()[0];
-	Node* node2 = graph->GetLocations()[1];
-	Node* node3 = graph->GetLocations()[2];
+	Node* node2 = graph->GetLocations()[2];
+	Node* node3 = graph->GetLocations()[1];
 	Node* node4 = graph->GetLocations()[3];
 
 	// Begin turn 1
 	const Move* nextMove1 = gameUpdate.NextMove();
 
-	EXPECT_EQ(gameUpdate.GetPath()[0].second, nextMove1->GetStartLocation());
-	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove1->GetEndLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[0].second->GetId(), nextMove1->GetStartLocation()->GetId());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second->GetId(), nextMove1->GetEndLocation()->GetId());
 
-	couple->SetCurrentPosition(graph->GetLocations()[1]);
+	couple->SetCurrentPosition(nextMove1->GetEndLocation());
 	gameUpdate.UpdateOccupiedLocations({ node2, node3 });
 	// End turn 1
 
 	// Begin turn 2
 	Move* nextMove2 = gameUpdate.NextMove();
 
-	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove2->GetStartLocation());
-	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove2->GetEndLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second->GetId(), nextMove2->GetStartLocation()->GetId());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second->GetId(), nextMove2->GetEndLocation()->GetId());
 
-	couple->SetCurrentPosition(graph->GetLocations()[1]);
+	couple->SetCurrentPosition(nextMove2->GetEndLocation());
 	gameUpdate.UpdateOccupiedLocations({ node3 });
 	// End turn 2
 
 	// Begin turn 3
 	Move* nextMove3 = gameUpdate.NextMove();
 
-	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove3->GetStartLocation());
-	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove3->GetEndLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second->GetId(), nextMove3->GetStartLocation()->GetId());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second->GetId(), nextMove3->GetEndLocation()->GetId());
 
-	couple->SetCurrentPosition(graph->GetLocations()[1]);
+	couple->SetCurrentPosition(nextMove3->GetEndLocation());
 	gameUpdate.UpdateOccupiedLocations({ node4 });
 	// End turn 3
 
 	// Begin turn 4
 	Move* nextMove4 = gameUpdate.NextMove();
 
-	EXPECT_EQ(gameUpdate.GetPath()[1].second, nextMove4->GetStartLocation());
-	EXPECT_EQ(gameUpdate.GetPath()[2].second, nextMove4->GetEndLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[1].second->GetId(), nextMove4->GetStartLocation()->GetId());
+	EXPECT_EQ(gameUpdate.GetPath()[2].second->GetId(), nextMove4->GetEndLocation()->GetId());
 
-	couple->SetCurrentPosition(graph->GetLocations()[2]);
+	couple->SetCurrentPosition(nextMove4->GetEndLocation());
 	gameUpdate.UpdateOccupiedLocations({ node4 });
 	// End turn 4
 
 	// Begin turn 5
 	Move* nextMove5 = gameUpdate.NextMove();
 
-	EXPECT_EQ(gameUpdate.GetPath()[2].second, nextMove5->GetStartLocation());
-	EXPECT_EQ(gameUpdate.GetPath()[3].second, nextMove5->GetEndLocation());
+	EXPECT_EQ(gameUpdate.GetPath()[2].second->GetId(), nextMove5->GetStartLocation()->GetId());
+	EXPECT_EQ(gameUpdate.GetPath()[3].second->GetId(), nextMove5->GetEndLocation()->GetId());
 
-	couple->SetCurrentPosition(graph->GetLocations()[3]);
+	couple->SetCurrentPosition(nextMove5->GetEndLocation());
 	gameUpdate.UpdateOccupiedLocations({ node4 });
 	// End turn 5
 

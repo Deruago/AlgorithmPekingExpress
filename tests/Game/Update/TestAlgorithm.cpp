@@ -19,12 +19,12 @@ void TestAlgorithm::PopulateGraph(GraphBuilder& graphBuilder)
 	graphBuilder.AddNode(1);
 	graphBuilder.AddNode(2);
 	graphBuilder.AddNode(3);
-	graphBuilder.AddNode(4);
+	graphBuilder.AddNode(88);
 	graphBuilder.AddConnection(1, 2, 1);
 	graphBuilder.AddConnection(1, 3, 3);
-	graphBuilder.AddConnection(1, 4, 7);
+	graphBuilder.AddConnection(1, 88, 7);
 	graphBuilder.AddConnection(2, 3, 1);
-	graphBuilder.AddConnection(3, 4, 1);
+	graphBuilder.AddConnection(3, 88, 1);
 }
 
 TEST_F(TestAlgorithm, TestConstructor_FieldsSetCorrectly)

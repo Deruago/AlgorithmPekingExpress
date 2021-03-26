@@ -18,6 +18,10 @@ namespace PekingExpress
 		 *	\brief Get all locations that are in this graph.
 		 */
 		const std::vector<Node*> GetLocations() const override;
+		
+		PekingExpress::Node* GetNode(int id) const;
+		
+		std::vector<PekingExpress::Node*> GetNodes(const std::vector<int>& ids) const;
 
 		/*!	\fn GetCriticalLocations
 		 *
@@ -26,6 +30,11 @@ namespace PekingExpress
 		 *	\details It loops through the locations, and returns a new vector with critical locations.
 		 */
 		const std::vector<Node*> GetCriticalLocations() const override;
+
+		constexpr static int GoalId()
+		{
+			return 88;
+		}
 	};
 }
 

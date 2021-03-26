@@ -7,12 +7,12 @@ PekingExpress::Move::Move(Node* startLocation_, Node* endLocation_, int price_)
 {
 }
 
-const PekingExpress::Node* PekingExpress::Move::GetStartLocation() const
+PekingExpress::Node* PekingExpress::Move::GetStartLocation() const
 {
 	return startLocation;
 }
 
-const PekingExpress::Node* PekingExpress::Move::GetEndLocation() const
+PekingExpress::Node* PekingExpress::Move::GetEndLocation() const
 {
 	return endLocation;
 }
